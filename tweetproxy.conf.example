@@ -1,0 +1,7 @@
+[LISTEN]
+port = 8080
+hostname = myhostname
+
+[AUTH]
+key = U7ZeouIf1jkeCkKt4do7aEO
+secret = a3Mfsda0I001c9N7I2tjKbgjTu2aICWhhWzhsqSWJq

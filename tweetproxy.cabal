@@ -51,8 +51,13 @@ executable tweetproxy
   main-is:             Main.hs
 
   -- Modules included in this executable, other than Main.
-  other-modules:       TweetProxy.Options
+  other-modules:       TweetProxy.Options,
+                       TweetProxy.Config,
+                       TweetProxy.Types
+
 
   -- Other library packages from which modules are imported.
-  build-depends:       base ==4.6.*,
-                       cmdargs >= 0.10
+  build-depends:       base >= 4 && <5,
+                       cmdargs >= 0.10,
+                       ConfigFile >= 1.0 && < 1.2,
+                       network >= 2.3.0 && <= 3

@@ -3,7 +3,10 @@
 module Main where
 
 import System.Console.CmdArgs.Implicit (cmdArgs)
-import TweetProxy.Options (options)
+import TweetProxy.Options (options, optionsConf)
+import TweetProxy.Config (getConfig)
+import TweetProxy.Types (configListen)
+
 
 main :: IO ()
-main = print =<< cmdArgs options
+main = cmdArgs options >>= getConfig . optionsConf >>= (print . configListen)
