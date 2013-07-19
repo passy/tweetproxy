@@ -3,10 +3,8 @@
 
 module TweetProxy.Types where
 
-import "network" Network.Socket.Internal (PortNumber)
-
 data Config = Config {
-    configListen :: PortNumber--,
+    configListen :: Int --,
     -- configHostname :: String,
     -- configKey :: String,
     -- configSecret :: String

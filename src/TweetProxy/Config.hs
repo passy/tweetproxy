@@ -15,7 +15,7 @@ getConfig conf = do
         listen <- get c "LISTEN" "port"
 
         return Config {
-            configListen = fromIntegral (listen::Word16)
+            configListen = listen
         }
 
     case config of
