@@ -3,7 +3,6 @@
 module TweetProxy.Config (getConfig) where
 
 import "ConfigFile" Data.ConfigFile (readstring, emptyCP, get)
-import Data.Word (Word16)
 import TweetProxy.Types
 
 
@@ -13,9 +12,15 @@ getConfig conf = do
     let config = do
         c <- readstring emptyCP contents
         listen <- get c "LISTEN" "port"
+        hostname <- get c "LISTEN" "hostname"
+        key <- get c "AUTH" "key"
+        secret <- get c "AUTH" "secret"
 
         return Config {
-            configListen = listen
+            configListen = listen,
+            configHostname = hostname,
+            configKey = key,
+            configSecret = secret
         }
 
     case config of

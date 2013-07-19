@@ -66,4 +66,5 @@ executable tweetproxy
                        wai >= 1.4 && < 1.5,
                        http-types >= 0.8 && < 0.9,
                        warp >= 1.3.9 && < 1.4,
-                       bytestring >= 0.10 && < 0.11
+                       bytestring >= 0.10 && < 0.11,
+                       network-conduit >= 1.0 && < 1.1
