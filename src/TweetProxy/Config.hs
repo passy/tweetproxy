@@ -12,13 +12,11 @@ getConfig conf = do
     let config = do
         c <- readstring emptyCP contents
         listen <- get c "LISTEN" "port"
-        hostname <- get c "LISTEN" "hostname"
         key <- get c "AUTH" "key"
         secret <- get c "AUTH" "secret"
 
         return Config {
             configListen = listen,
-            configHostname = hostname,
             configKey = key,
             configSecret = secret
         }

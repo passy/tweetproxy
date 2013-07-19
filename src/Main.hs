@@ -1,4 +1,10 @@
-{-# LANGUAGE OverloadedStrings, PackageImports, DataKinds #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE PackageImports #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# OPTIONS -Wall #-}
 
 module Main where
@@ -6,27 +12,37 @@ module Main where
 import System.Console.CmdArgs.Implicit (cmdArgs)
 import TweetProxy.Options (options, optionsConf)
 import TweetProxy.Config (getConfig)
-import TweetProxy.Types (Config, configListen, configHostname)
+import TweetProxy.Types (Config(..))
 
-import "http-types" Network.HTTP.Types (status200)
-import "wai" Network.Wai (Application, responseLBS)
-import "warp" Network.Wai.Handler.Warp (Settings, runSettings, settingsHost,
-                                        settingsPort, defaultSettings)
-import "network-conduit" Data.Conduit.Network (HostPreference(..))
+import Yesod
 
 
-app :: Application
-app _ = return $ responseLBS status200 [("Content-Type", "text/plain")] "Hullo World"
-
-
-makeSettings :: Config -> Settings
-makeSettings config = defaultSettings {
-    settingsPort = configListen config,
-    settingsHost = Host $ configHostname config
+data Proxy = Proxy {
+    consumerKey :: String,
+    consumerSecret :: String
 }
 
+mkYesod "Proxy" [parseRoutes|
+    / RootR GET
+|]
+
+instance Yesod Proxy
+
+
+getRootR :: Handler Html
+getRootR = do
+    yesod <- getYesod
+    defaultLayout [whamlet|
+        $doctype 5
+        <h1>Hello World
+        <h2>Consumer Key: #{consumerKey yesod}
+    |]
+
+
 start :: Config -> IO ()
-start config = runSettings (makeSettings config) app
+start config = do
+    let app = Proxy (configKey config) (configSecret config)
+    warp (configListen config) app
 
 
 main :: IO ()

@@ -4,7 +4,6 @@ module TweetProxy.Types where
 
 data Config = Config {
     configListen :: Int,
-    configHostname :: String,
     configKey :: String,
     configSecret :: String
 }
