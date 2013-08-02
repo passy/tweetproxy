@@ -16,17 +16,14 @@ import qualified "warp" Network.Wai.Handler.Warp as Warp
 import qualified "wai" Network.Wai as Wai
 
 
-data Proxy = Proxy {
-    consumerKey :: String,
-    consumerSecret :: String
-}
-
-start :: Config -> IO ()
-start config = do
-    let app = Proxy (configKey config) (configSecret config)
-    Warp.run (configListen config) $ const $ return $ Wai.ResponseBuilder
+app :: Wai.Application
+app _ = return $ Wai.ResponseBuilder
         status200 [("Content-Type", "text/plain"), ("Content-Length", "4")]
         $ fromByteString "Test"
+
+
+start :: Config -> IO ()
+start config = Warp.run (configListen config) app
 
 main :: IO ()
 main = cmdArgs options >>= getConfig . optionsConf >>= start
