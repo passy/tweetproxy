@@ -1,8 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE PackageImports #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# OPTIONS -Wall #-}
@@ -13,8 +10,10 @@ import System.Console.CmdArgs.Implicit (cmdArgs)
 import TweetProxy.Options (options, optionsConf)
 import TweetProxy.Config (getConfig)
 import TweetProxy.Types (Config(..))
-
-import Yesod
+import "http-types" Network.HTTP.Types (status200)
+import "blaze-builder" Blaze.ByteString.Builder (fromByteString)
+import qualified "warp" Network.Wai.Handler.Warp as Warp
+import qualified "wai" Network.Wai as Wai
 
 
 data Proxy = Proxy {
@@ -22,28 +21,12 @@ data Proxy = Proxy {
     consumerSecret :: String
 }
 
-mkYesod "Proxy" [parseRoutes|
-    / RootR GET
-|]
-
-instance Yesod Proxy
-
-
-getRootR :: Handler Html
-getRootR = do
-    yesod <- getYesod
-    defaultLayout [whamlet|
-        $doctype 5
-        <h1>Hello World
-        <h2>Consumer Key: #{consumerKey yesod}
-    |]
-
-
 start :: Config -> IO ()
 start config = do
     let app = Proxy (configKey config) (configSecret config)
-    warp (configListen config) app
-
+    Warp.run (configListen config) $ const $ return $ Wai.ResponseBuilder
+        status200 [("Content-Type", "text/plain"), ("Content-Length", "4")]
+        $ fromByteString "Test"
 
 main :: IO ()
 main = cmdArgs options >>= getConfig . optionsConf >>= start
